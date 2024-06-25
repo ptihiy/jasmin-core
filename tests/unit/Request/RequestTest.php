@@ -26,4 +26,13 @@ final class RequestTest extends TestCase
         $request = new Request($server);
         $this->assertTrue($request->isGet());
     }
+
+    public function testRequestHaveServerInfo()
+    {
+        $server = [];
+        $server['SERVER_NAME'] = 'localhost';
+
+        $request = new Request($server);
+        $this->assertEquals('localhost', $request->getServer());
+    }
 }
