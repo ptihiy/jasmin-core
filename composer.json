@@ -1,0 +1,18 @@
+{
+    "name": "jasmin/core",
+    "description": "Jasmin framework core",
+    "autoload": {
+        "psr-4": {
+            "Jasmin\\Core\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Pavel Smirnov",
+            "email": "ptihiy@gmail.com"
+        }
+    ],
+    "require-dev": {
+        "phpunit/phpunit": "^11.2"
+    }
+}
