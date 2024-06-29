@@ -4,8 +4,37 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "2756a41c6efdc397867920f828ce7010",
-    "packages": [],
+    "content-hash": "d8718fcc6fd0fffef702100c666b3b0b",
+    "packages": [
+        {
+            "name": "jasmin/template-engine",
+            "version": "dev-dev",
+            "dist": {
+                "type": "path",
+                "url": "/home/pavel/code2024/jasmin-packages/template/template-engine",
+                "reference": "d3fd852835adde7112f10bf0ffe94d3c696f58bd"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^11"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Jasmin\\TemplateEngine\\": "src/"
+                }
+            },
+            "authors": [
+                {
+                    "name": "Pavel Smirnov",
+                    "email": "ptihiy@gmail.com"
+                }
+            ],
+            "description": "Template engine",
+            "transport-options": {
+                "relative": false
+            }
+        }
+    ],
     "packages-dev": [
         {
             "name": "myclabs/deep-copy",
@@ -1641,7 +1670,7 @@
         }
     ],
     "aliases": [],
-    "minimum-stability": "stable",
+    "minimum-stability": "dev",
     "stability-flags": [],
     "prefer-stable": false,
     "prefer-lowest": false,

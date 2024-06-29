@@ -10,6 +10,7 @@ class Request implements RequestInterface
     private $requestMethod = null;
     private $server = null;
     private $port = null;
+    private $url = null;
 
     public function __construct(array $server)
     {
@@ -28,6 +29,10 @@ class Request implements RequestInterface
 
         if (array_key_exists('SERVER_PORT', $server)) {
             $this->port = $server['SERVER_PORT'];
+        }
+
+        if (array_key_exists('REQUEST_URI', $server)) {
+            $this->url = $server['REQUEST_URI'];
         }
     }
 
@@ -49,5 +54,10 @@ class Request implements RequestInterface
     public function getPort(): string
     {
         return $this->port;
+    }
+
+    public function getUrl(): string
+    {
+        return $this->url;
     }
 }
