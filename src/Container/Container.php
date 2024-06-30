@@ -9,7 +9,7 @@ class Container implements ContainerInterface
 {
     private array $services = [];
 
-    public function __construct()
+    public function __construct(private array $config = [])
     {
         $this->services = [
             Request::class => fn() => new Request($_SERVER),
@@ -23,7 +23,15 @@ class Container implements ContainerInterface
 
     public function get(string $id): mixed
     {
+        if (is_callable($this->services[$id])) {
+            return call_user_func($this->services[$id]);
+        }
         return isset($this->services[$id]) ? $this->services[$id] : $this->getService($id);
+    }
+
+    public function add(string $id, mixed $someThing): void
+    {
+        $this->services[$id] = $someThing;
     }
 
     // see https://habr.com/ru/articles/655399/
