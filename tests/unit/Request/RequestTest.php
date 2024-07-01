@@ -44,4 +44,13 @@ final class RequestTest extends TestCase
         $request = new Request($server);
         $this->assertEquals('/index.html', $request->getUrl());
     }
+
+    public function testRequestReturnsMethod()
+    {
+        $server = [];
+        $server['REQUEST_METHOD'] = 'POST';
+
+        $request = new Request($server);
+        $this->assertEquals('POST', $request->getMethod());
+    }
 }

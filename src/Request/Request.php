@@ -46,6 +46,11 @@ class Request implements RequestInterface
         return $this->requestMethod === Request::GET;
     }
 
+    public function getMethod(): string
+    {
+        return $this->requestMethod;
+    }
+
     public function getServer(): string
     {
         return $this->server;
