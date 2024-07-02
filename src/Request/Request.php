@@ -11,10 +11,14 @@ class Request implements RequestInterface
     private $server = null;
     private $port = null;
     private $url = null;
+    private $get = [];
+    private $post = [];
 
-    public function __construct(array $server)
+    public function __construct(array $server, array $get = [], array $post = [])
     {
         $this->setRequestData($server);
+        $this->get = $get;
+        $this->post = $post;
     }
 
     private function setRequestData(array $server): void
@@ -64,5 +68,10 @@ class Request implements RequestInterface
     public function getUrl(): string
     {
         return $this->url;
+    }
+
+    public function input($name, $default = null): mixed
+    {
+        return array_key_exists($name, $this->post) ? $this->post[$name] : $default;
     }
 }
