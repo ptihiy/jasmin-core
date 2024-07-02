@@ -2,26 +2,36 @@
 
 namespace Jasmin\Core\Database;
 
-use InvalidArgumentException;
-use Jasmin\Core\Database\Attributes\DataTypes\DataType;
-use Jasmin\Core\Database\Attributes\Required;
+use PDO;
 use ReflectionClass;
-use Jasmin\Core\Database\ConnectionInterface;
 use ReflectionProperty;
+use InvalidArgumentException;
+use Jasmin\Core\Database\Attributes\Required;
+use Jasmin\Core\Database\ConnectionInterface;
+use Jasmin\Core\Database\Attributes\DataTypes\DataType;
 
-class ActiveRecord
+abstract class ActiveRecord
 {
     private $conn;
-    protected string $tableName;
+    protected static string $tableName;
 
     public function __construct()
     {
         $this->conn = DatabaseResolver::getConnection();
     }
 
+    public static function get()
+    {
+        $conn = (DatabaseResolver::getConnection())->getConnection();
+        $tableName = static::$tableName;
+        $stmt = $conn->prepare("SELECT * FROM $tableName ORDER BY id DESC LIMIT 10");
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_CLASS, static::class);
+    }
+
     public function all()
     {
-        $stmt = $this->conn->getConnection()->prepare("SELECT * FROM $this->tableName");
+        $stmt = $this->conn->getConnection()->prepare("SELECT * FROM $this->tableName ORDER BY id DESC LIMIT 10");
         $stmt->execute();
         return $stmt;
     }
