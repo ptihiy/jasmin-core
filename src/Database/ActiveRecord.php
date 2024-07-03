@@ -3,15 +3,19 @@
 namespace Jasmin\Core\Database;
 
 use PDO;
+use ArrayAccess;
 use ReflectionClass;
 use ReflectionProperty;
 use InvalidArgumentException;
+use Jasmin\Core\Traits\ArrayAccessable;
 use Jasmin\Core\Database\Attributes\Required;
 use Jasmin\Core\Database\ConnectionInterface;
 use Jasmin\Core\Database\Attributes\DataTypes\DataType;
 
-abstract class ActiveRecord
+abstract class ActiveRecord implements ArrayAccess
 {
+    use ArrayAccessable;
+
     private $conn;
     protected static string $tableName;
 
@@ -29,9 +33,21 @@ abstract class ActiveRecord
         return $stmt->fetchAll(PDO::FETCH_CLASS, static::class);
     }
 
-    public function all()
+    public static function find(int $id)
     {
-        $stmt = $this->conn->getConnection()->prepare("SELECT * FROM $this->tableName ORDER BY id DESC LIMIT 10");
+        $conn = (DatabaseResolver::getConnection())->getConnection();
+        $tableName = static::$tableName;
+        $stmt = $conn->prepare("SELECT * FROM " . static::$tableName . " WHERE id = :id LIMIT 1");
+        $stmt->bindParam(':id', $id);
+        $stmt->execute();
+        $stmt->setFetchMode(PDO::FETCH_CLASS, static::class);
+        return $stmt->fetch();
+    }
+
+    public static function all()
+    {
+        $conn = (DatabaseResolver::getConnection())->getConnection();
+        $stmt = $conn->prepare("SELECT *  " . static::$tableName . " ORDER BY id DESC LIMIT 10");
         $stmt->execute();
         return $stmt;
     }
@@ -45,20 +61,23 @@ abstract class ActiveRecord
                 if (Required::class === $reflectionAttribute->getName() && empty($this->{$reflectionProperty->getName()})) {
                     throw new InvalidArgumentException("Not all data is provided");
                 }
-                if (DataType::class === $reflectionAttribute->getName()) {
-                    $data[$reflectionProperty->getName()] = $this->{$reflectionProperty->getName()};
+                if ($reflectionProperty->isInitialized($this) && DataType::class === $reflectionAttribute->getName()) {
+                    if (!is_null($this->{$reflectionProperty->getName()})) {
+                        $data[$reflectionProperty->getName()] = $this->{$reflectionProperty->getName()};
+                    }
                 }
             }
         }
 
         $values = implode(', ', array_keys($data));
         $bindings = implode(', ', array_map(fn ($k) => ':' . $k, array_keys($data)));
-        $prepare = "INSERT INTO $this->tableName (" . $values . ") VALUES (" . $bindings . ")";
+        $prepare = "INSERT INTO " . static::$tableName . " (" . $values . ") VALUES (" . $bindings . ")";
 
         $stmt = $this->conn->getConnection()->prepare($prepare);
         foreach ($data as $prop => $value) {
-            $stmt->bindParam(':' . $prop, $value);
+            $stmt->bindValue(':' . $prop, $value);
         }
+
         $stmt->execute();
     }
 }
