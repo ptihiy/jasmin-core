@@ -16,6 +16,9 @@
         <testsuite name="request">
             <directory>tests/unit/Request</directory>
         </testsuite>
+        <testsuite name="routing">
+            <directory>tests/unit/Routing</directory>
+        </testsuite>
     </testsuites>
 
     <source ignoreIndirectDeprecations="true" restrictNotices="true" restrictWarnings="true">

@@ -36,13 +36,22 @@ final class RequestTest extends TestCase
         $this->assertEquals('localhost', $request->getServer());
     }
 
-    public function testRequestHaveUrlInfo()
+    public function testRequestReturnsUrl()
+    {
+        $server = [];
+        $server['REQUEST_URI'] = 'index.html';
+
+        $request = new Request($server);
+        $this->assertEquals('index.html', $request->getUrl());
+    }
+
+    public function testRequestReturnsUrlAndTrimsIt()
     {
         $server = [];
         $server['REQUEST_URI'] = '/index.html';
 
         $request = new Request($server);
-        $this->assertEquals('/index.html', $request->getUrl());
+        $this->assertEquals('index.html', $request->getUrl());
     }
 
     public function testRequestReturnsMethod()
@@ -52,5 +61,14 @@ final class RequestTest extends TestCase
 
         $request = new Request($server);
         $this->assertEquals('POST', $request->getMethod());
+    }
+
+    public function testRequestReturnsReferer()
+    {
+        $server = [];
+        $server['HTTP_REFERER'] = 'admin';
+
+        $request = new Request($server);
+        $this->assertEquals('admin', $request->referer());
     }
 }

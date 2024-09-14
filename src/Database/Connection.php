@@ -9,10 +9,10 @@ class Connection implements ConnectionInterface
 {
     private ?PDO $dbh;
 
-    public function __construct($conn, $host, $db, $user, $password)
+    public function __construct($conn, $host, $port, $db, $user, $pass)
     {
         try {
-            $this->dbh = new PDO(sprintf("%s:host=%s;dbname=%s", $conn, $host, $db), $user, $password);
+            $this->dbh = new PDO(sprintf("%s:host=%s;port=%s;dbname=%s", $conn, $host, $port, $db), $user, $pass);
         } catch (PDOException $e) {
             var_dump($e->getMessage());
         }

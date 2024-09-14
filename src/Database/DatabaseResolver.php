@@ -8,7 +8,7 @@ class DatabaseResolver
 
     public static function getConnection()
     {
-        return self::$conn;
+        return self::$conn->getConnection();
     }
 
     public static function setConnection($conn)
