@@ -23,6 +23,11 @@ class Container implements ContainerInterface
 
     public function get(string $id): mixed
     {
+        // If not in container, we try to instantiate
+        if (!array_key_exists($id, $this->services)) {
+            return $this->getService($id);
+        }
+
         if (is_callable($this->services[$id])) {
             return call_user_func($this->services[$id]);
         }

@@ -4,21 +4,21 @@ namespace Jasmin\Core\Request;
 
 class Request implements RequestInterface
 {
-    public const POST = 'POST';
-    public const GET = 'GET';
-
     private $requestMethod = null;
     private $server = null;
     private $port = null;
     private $url = null;
     private $get = [];
     private $post = [];
+    protected $files = [];
+    private $referer = null;
 
-    public function __construct(array $server, array $get = [], array $post = [])
+    public function __construct(array $server, array $get = [], array $post = [], array $files = [])
     {
         $this->setRequestData($server);
         $this->get = $get;
         $this->post = $post;
+        $this->files = $files;
     }
 
     private function setRequestData(array $server): void
@@ -37,6 +37,11 @@ class Request implements RequestInterface
 
         if (array_key_exists('REQUEST_URI', $server)) {
             $this->url = $server['REQUEST_URI'];
+        }
+
+
+        if (array_key_exists('HTTP_REFERER', $server)) {
+            $this->referer = $server['HTTP_REFERER'];
         }
     }
 
@@ -67,11 +72,26 @@ class Request implements RequestInterface
 
     public function getUrl(): string
     {
-        return $this->url;
+        return trim($this->url, '/');
     }
 
     public function input($name, $default = null): mixed
     {
         return array_key_exists($name, $this->post) ? $this->post[$name] : $default;
+    }
+
+    public function post()
+    {
+        return $this->post;
+    }
+
+    public function file(string $name): mixed
+    {
+        return $this->files[$name];
+    }
+
+    public function referer(): ?string
+    {
+        return $this->referer;
     }
 }
