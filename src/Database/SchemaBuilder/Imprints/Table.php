@@ -92,12 +92,12 @@ class Table implements QueryBuilderInterface
         return $this;
     }
 
-    public function where(): QueryBuilderInterface
+    public function where(mixed $param, ?string $value = null): QueryBuilderInterface
     {
         return $this;
     }
 
-    public function orWhere(): QueryBuilderInterface
+    public function orWhere(mixed $param, ?string $value = null): QueryBuilderInterface
     {
         return $this;
     }
@@ -112,7 +112,7 @@ class Table implements QueryBuilderInterface
         return $this;
     }
 
-    public function orderBy(): QueryBuilderInterface
+    public function orderBy(string $clause, string $order): QueryBuilderInterface
     {
         return $this;
     }
