@@ -2,63 +2,60 @@
 
 namespace test;
 
-use Jasmin\Core\Routing\Route;
+use test\TestController;
 use PHPUnit\Framework\TestCase;
-use Jasmin\Core\Request\Request;
+use Jasmin\Core\Routing\BasicRoute;
 use PHPUnit\Framework\Attributes\CoversClass;
 
-#[CoversClass(Route::class)]
+#[CoversClass(BasicRoute::class)]
 final class RouteTest extends TestCase
 {
-    public function testAddGetRouteWorks()
+    public function testRouteCanProvidePath()
     {
-        Route::clearRoutes();
-        Route::get('test', fn() => 'great!');
-        $routes = [
-            Request::GET => [ '~^test$~' => fn() => 'great!' ],
-            Request::POST => [],
-            Request::DELETE => []
-        ];
+        $route = new BasicRoute('test-route', fn() => 'test');
 
-        $this->assertEquals($routes, Route::getRoutes());
+        $this->assertEquals('test-route', $route->getPath());
     }
 
-    public function testClearRoutesWorks()
+    public function testRouteCanProvideMethod()
     {
-        Route::get('test', fn() => 'great!');
-        Route::clearRoutes();
+        $route = new BasicRoute('test-route', fn() => 'test');
 
-        $routes = [
-        Request::GET => [],
-        Request::POST => [],
-        Request::DELETE => []
-        ];
-        $this->assertEquals($routes, Route::getRoutes());
+        $this->assertEquals(BasicRoute::GET, $route->getMethod());
     }
 
-    public function testBasicNamedGroupWorks()
+    public function testRouteCanProvidePostMethod()
     {
-        Route::clearRoutes();
-        Route::get('news/{id}', fn() => 'great!');
-        $routes = [
-            Request::GET => [ '~^news/(?P<id>[^\/]+)$~' => fn() => 'great!' ],
-            Request::POST => [],
-            Request::DELETE => []
-        ];
-        $this->assertEquals($routes, Route::getRoutes());
+        $route = BasicRoute::post('test-route', fn() => 'test');
+
+        $this->assertEquals(BasicRoute::POST, $route->getMethod());
+    }
+    
+    public function testRouteCanProvideDeleteMethod()
+    {
+        $route = BasicRoute::delete('test-route', fn() => 'test');
+
+        $this->assertEquals(BasicRoute::DELETE, $route->getMethod());
+    } 
+
+    public function testRouteCanBeResolvedWithClosure()
+    {
+        $route = new BasicRoute('test-route', fn() => 'test');
+
+        $this->assertEquals('test', $route->resolve());
     }
 
-    public function testMatchWithoutNamedGroupWorks()
+    public function testGetRouteCanBeResolvedWithClosure()
     {
-        Route::clearRoutes();
-        Route::get('test', fn() => 'great!');
-        $this->assertTrue(Route::match('test', Request::GET));
+        $route = BasicRoute::get('test-route', fn() => 'test');
+
+        $this->assertEquals('test', $route->resolve());
     }
 
-    public function testMatchWithNamedGroupWorks()
+    public function testRouteCanBeResolvedWithControllerMethod()
     {
-        Route::clearRoutes();
-        Route::get('news/{id}', fn() => 'great!');
-        $this->assertTrue(Route::match('news/12', Request::GET));
+        $route = new BasicRoute('test-route', [TestController::class, 'handle']);
+
+        $this->assertEquals('test', $route->resolve());
     }
 }

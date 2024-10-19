@@ -3,7 +3,8 @@
     "description": "Jasmin framework core",
     "autoload": {
         "psr-4": {
-            "Jasmin\\Core\\": "src/"
+            "Jasmin\\Core\\": "src/",
+            "test\\": "tests/src"
         }
     },
     "authors": [

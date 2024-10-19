@@ -10,9 +10,6 @@
          failOnRisky="true"
          failOnWarning="true">
     <testsuites>
-        <testsuite name="default">
-            <directory>tests</directory>
-        </testsuite>
         <testsuite name="request">
             <directory>tests/unit/Request</directory>
         </testsuite>
