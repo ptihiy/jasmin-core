@@ -26,4 +26,12 @@ final class RouteCollectionTest extends TestCase
 
         $this->assertEquals('test', $routeCollection->resolve('test-route/12'));
     }
+
+    public function testRouteCollectionCanBeResolvedWithComplexSubstitution()
+    {
+        $routeCollection = new RouteCollection();
+        $routeCollection->addRoute(new BasicRoute('test-route/{id}/{id2}', function () { return 'test'; }));
+
+        $this->assertEquals('test', $routeCollection->resolve('test-route/12/14'));
+    }
 }
