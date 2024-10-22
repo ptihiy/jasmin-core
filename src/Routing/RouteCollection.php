@@ -15,8 +15,20 @@ class RouteCollection
         ]
     ) {}
 
+    public function getRoutes() {
+        return $this->routes;
+    }
+
     public function addRoute(Route $route) {
         $this->routes[$route->getMethod()][$route->getPath()] = $route;
+    }
+
+    public function addCollection(RouteCollection $routeCollection) {
+        foreach ($routeCollection->getRoutes() as $methodRoutes) {
+            foreach ($methodRoutes as $route) {
+                $this->addRoute($route);
+            }
+        } 
     }
 
     public function resolve(string $path, string $method = Route::GET)

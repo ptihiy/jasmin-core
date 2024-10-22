@@ -50,4 +50,16 @@ final class RouteCollectionTest extends TestCase
 
         $this->assertEquals(null, $routeCollection->resolve('test-route', Route::GET));
     }
+
+    public function testRouteCollectionCanBeMerged()
+    {
+        $routeCollection1 = new RouteCollection();
+
+        $routeCollection2 = new RouteCollection();
+        $routeCollection2->addRoute(new Route('test-route', function () { return 'test'; }));
+
+        $routeCollection1->addCollection($routeCollection2);
+
+        $this->assertEquals('test', $routeCollection1->resolve('test-route'));
+    }
 }
