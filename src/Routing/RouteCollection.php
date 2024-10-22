@@ -2,24 +2,24 @@
 
 namespace Jasmin\Core\Routing;
 
-use Jasmin\Core\Routing\BasicRoute;
+use Jasmin\Core\Routing\Route;
 
 class RouteCollection
 {
     public function __construct(
         protected array $routes = [
-            BasicRoute::GET => [],
-            BasicRoute::POST => [],
-            BasicRoute::PUT => [],
-            BasicRoute::DELETE => [],
+            Route::GET => [],
+            Route::POST => [],
+            Route::PUT => [],
+            Route::DELETE => [],
         ]
     ) {}
 
-    public function addRoute(BasicRoute $route) {
+    public function addRoute(Route $route) {
         $this->routes[$route->getMethod()][$route->getPath()] = $route;
     }
 
-    public function resolve(string $path, string $method = BasicRoute::GET)
+    public function resolve(string $path, string $method = Route::GET)
     {
         if (array_key_exists($path, $this->routes[$method])) {
             return $this->routes[$method][$path]->resolve();

@@ -4,57 +4,57 @@ namespace test;
 
 use test\TestController;
 use PHPUnit\Framework\TestCase;
-use Jasmin\Core\Routing\BasicRoute;
+use Jasmin\Core\Routing\Route;
 use PHPUnit\Framework\Attributes\CoversClass;
 
-#[CoversClass(BasicRoute::class)]
+#[CoversClass(Route::class)]
 final class RouteTest extends TestCase
 {
     public function testRouteCanProvidePath()
     {
-        $route = new BasicRoute('test-route', fn() => 'test');
+        $route = new Route('test-route', fn() => 'test');
 
         $this->assertEquals('test-route', $route->getPath());
     }
 
     public function testRouteCanProvideMethod()
     {
-        $route = new BasicRoute('test-route', fn() => 'test');
+        $route = new Route('test-route', fn() => 'test');
 
-        $this->assertEquals(BasicRoute::GET, $route->getMethod());
+        $this->assertEquals(Route::GET, $route->getMethod());
     }
 
     public function testRouteCanProvidePostMethod()
     {
-        $route = BasicRoute::post('test-route', fn() => 'test');
+        $route = Route::post('test-route', fn() => 'test');
 
-        $this->assertEquals(BasicRoute::POST, $route->getMethod());
+        $this->assertEquals(Route::POST, $route->getMethod());
     }
     
     public function testRouteCanProvideDeleteMethod()
     {
-        $route = BasicRoute::delete('test-route', fn() => 'test');
+        $route = Route::delete('test-route', fn() => 'test');
 
-        $this->assertEquals(BasicRoute::DELETE, $route->getMethod());
+        $this->assertEquals(Route::DELETE, $route->getMethod());
     } 
 
     public function testRouteCanBeResolvedWithClosure()
     {
-        $route = new BasicRoute('test-route', fn() => 'test');
+        $route = new Route('test-route', fn() => 'test');
 
         $this->assertEquals('test', $route->resolve());
     }
 
     public function testGetRouteCanBeResolvedWithClosure()
     {
-        $route = BasicRoute::get('test-route', fn() => 'test');
+        $route = Route::get('test-route', fn() => 'test');
 
         $this->assertEquals('test', $route->resolve());
     }
 
     public function testRouteCanBeResolvedWithControllerMethod()
     {
-        $route = new BasicRoute('test-route', [TestController::class, 'handle']);
+        $route = new Route('test-route', [TestController::class, 'handle']);
 
         $this->assertEquals('test', $route->resolve());
     }

@@ -2,77 +2,86 @@
 
 namespace Jasmin\Core\Routing;
 
-use Jasmin\Core\Request\Request;
+use Exception;
 
 class Route
 {
-    private static array $routes = [
-        Request::GET => [],
-        Request::POST => [],
-        Request::DELETE => []
-    ];
+    public const GET = "GET";
+    public const POST = "POST";
+    public const PUT = "PUT";
+    public const DELETE = "DELETE";
 
-    private static array $_middleware = [];
-
-    public static function getRoutes(): array
+    public function __construct(
+        protected $path,
+        protected $action,
+        protected $method = self::GET,
+        protected array $middleware = []
+    )
     {
-        return static::$routes;
+        
     }
 
-    public static function clearRoutes(): void
-    {
-        static::$routes = [
-            Request::GET => [],
-            Request::POST => [],
-            Request::DELETE => []
-        ];
+    public function getPath() {
+        return $this->path;
     }
 
-    public static function get(string $route, callable|array $action): void
-    {
-        static::$routes[Request::GET][static::replaceNamedGroups($route)] = [...$action, self::$_middleware];
+    public function getMethod() {
+        return $this->method;
     }
 
-    public static function post(string $route, callable|array $action): void
+    public function resolve()
     {
-        static::$routes[Request::POST][static::replaceNamedGroups($route)] = [...$action, self::$_middleware];
-    }
-
-    public static function delete(string $route, callable|array $action): void
-    {
-        static::$routes[Request::DELETE][static::replaceNamedGroups($route)] = [...$action, self::$_middleware];
-    }
-
-    private static function replaceNamedGroups(string $route): string
-    {
-        return '~^' . preg_replace('~{([^}]+)}~', '(?P<\1>[^\/]+)', $route) . '$~';
-    }
-
-    public static function match(string $matchedRoute, string $method = Request::GET): mixed
-    {
-        foreach (array_keys(static::getRoutes()[$method]) as $route) {
-            if (preg_match($route, $matchedRoute)) {
-                return static::getRoutes()[$method][$route];
-            }
+        if (is_callable($this->action)) {
+            return ($this->action)();
+        }
+        
+        if (is_array($this->action) && 2 === count($this->action)) {
+            list($className, $methodName) = $this->action;
+            return call_user_func([new $className, $methodName]);
         }
 
-        return false;
+        throw new Exception("malformed route");
     }
 
-    public static function middleware(string $middleware, callable $func)
+    public static function get(
+        $path,
+        $action,
+        array $middleware = []
+    ): self
     {
-        self::addMiddleware($middleware);
-        $func();
-        self::removeMiddleware($middleware);
+        return new self(
+            $path,
+            $action,
+            self::GET,
+            $middleware
+        );
     }
 
-    private static function addMiddleware(string $middleware)
+    public static function post(
+        $path,
+        $action,
+        array $middleware = []
+    ): self
     {
-        self::$_middleware[] = $middleware;
+        return new self(
+            $path,
+            $action,
+            self::POST,
+            $middleware
+        );
     }
 
-    private static function removeMiddleware(string $middleware)
+    public static function delete(
+        $path,
+        $action,
+        array $middleware = []
+    ): self
     {
-        self::$_middleware = array_filter(self::$_middleware, fn($e) => $e !== $middleware);
+        return new self(
+            $path,
+            $action,
+            self::DELETE,
+            $middleware
+        );
     }
 }
