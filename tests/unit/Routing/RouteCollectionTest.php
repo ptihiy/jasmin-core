@@ -34,4 +34,20 @@ final class RouteCollectionTest extends TestCase
 
         $this->assertEquals('test', $routeCollection->resolve('test-route/12/14'));
     }
+
+    public function tellRouteCollectionResolvesWithCorrectMethod()
+    {
+        $routeCollection = new RouteCollection();
+        $routeCollection->addRoute(new BasicRoute('test-route', function () { return 'test'; }, BasicRoute::POST));
+
+        $this->assertEquals('test', $routeCollection->resolve('test-route', BasicRoute::POST));
+    }
+
+    public function testRouteCollectionDoesntResolveWithIncorrectMethod()
+    {
+        $routeCollection = new RouteCollection();
+        $routeCollection->addRoute(new BasicRoute('test-route', function () { return 'test'; }, BasicRoute::POST));
+
+        $this->assertEquals(null, $routeCollection->resolve('test-route', BasicRoute::GET));
+    }
 }

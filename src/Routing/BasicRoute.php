@@ -8,6 +8,7 @@ class BasicRoute
 {
     public const GET = "GET";
     public const POST = "POST";
+    public const PUT = "PUT";
     public const DELETE = "DELETE";
 
     public function __construct(
