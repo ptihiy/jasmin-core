@@ -3,6 +3,7 @@
 namespace Jasmin\Core\Routing;
 
 use Exception;
+use Jasmin\Core\Container\ContainerInterface;
 
 class Route
 {
@@ -29,7 +30,11 @@ class Route
         return $this->method;
     }
 
-    public function resolve()
+    public function getAction() {
+        return $this->action;
+    }
+
+    public function resolve(ContainerInterface $container)
     {
         if (is_callable($this->action)) {
             return ($this->action)();
@@ -37,7 +42,7 @@ class Route
         
         if (is_array($this->action) && 2 === count($this->action)) {
             list($className, $methodName) = $this->action;
-            return call_user_func([new $className, $methodName]);
+            return $container->get($className)->{$methodName}();
         }
 
         throw new Exception("malformed route");

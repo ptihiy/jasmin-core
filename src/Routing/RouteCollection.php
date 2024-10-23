@@ -31,6 +31,19 @@ class RouteCollection
         } 
     }
 
+    public function getAction(string $path, string $method = Route::GET)
+    {
+        if (array_key_exists($path, $this->routes[$method])) {
+            return $this->routes[$method][$path]->getAction();
+        } else {
+            foreach ($this->routes[$method] as $route) {
+                if (preg_match("|" . RegexBuilder::compile($route->getPath()) . "|", $path, $matches)) {
+                    return $route->getAction();
+                }
+            }
+        }
+    }
+
     public function resolve(string $path, string $method = Route::GET)
     {
         if (array_key_exists($path, $this->routes[$method])) {
